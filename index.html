@@ -160,7 +160,7 @@
             function changeColor() {
                 analyser.getByteFrequencyData(dataArray);
 
-                const bass = dataArray.slice(0, bufferLength / 2);
+                const bass = dataArray.slice(0, bufferLength / 0.1);
                 const bassAverage = bass.reduce((a, b) => a + b, 0) / bass.length;
 
                 const red = Math.floor(map(bassAverage, 0, 255, 0, 255));
