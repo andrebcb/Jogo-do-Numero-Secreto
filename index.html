@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>JS Game</title>
+    <style>
+        h1 {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            transition: color 0.1s ease;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container__conteudo">
+            <div class="container__informacoes">
+                <div class="container__texto">
+                    <h1>Batida da Música</h1>
+                    <p class="texto__paragrafo"></p>
+                </div>
+                <input type="number" min="1" max="10" class="container__input">
+                <div class="chute container__botoes">
+                    <button onclick="verificarChute()" class="container__botao">Chutar</button>
+                    <button onclick="novojogo()" id="reiniciar" class="container__botao" disabled>Novo jogo</button>
+                </div>
+            </div>
+            <img src="./img/ia.png" alt="Uma pessoa olhando para a esquerda" class="container__imagem-pessoa" />
+        </div>
+        <script src="app.js" defer></script>
+        <!-- Controles de Áudio -->
+        <div class="audio-controls">
+            <audio id="fundoAudio" src="fundo.mp3" loop></audio>
+            <button id="playPauseButton">Play</button>
+            <label for="volumeControl">Volume:</label>
+            <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+        </div>
+    </div>
+    
+    <script>
+        const audio = document.getElementById('fundoAudio');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const volumeControl = document.getElementById('volumeControl');
+        const h1 = document.querySelector('h1');
+          
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioSource = audioContext.createMediaElementSource(audio);
+        const analyser = audioContext.createAnalyser();
+
+        audioSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function map(value, inMin, inMax, outMin, outMax) {
+            return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+        }
+
+        playPauseButton.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseButton.textContent = 'Pause';
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                animateH1();
+            } else {
+                audio.pause();
+                playPauseButton.textContent = 'Play';
+            }
+        });
+
+        volumeControl.addEventListener('input', () => {
+            audio.volume = volumeControl.value;
+        });
+
+        let lastTime = performance.now();
+        let beatTimes = [];
+
+        function animateH1() {
+            function changeColor() {
+                analyser.getByteFrequencyData(dataArray);
+
+                const bass = dataArray.slice(0, bufferLength / 2);
+                const treble = dataArray.slice(bufferLength / 2, bufferLength);
+
+                const bassAverage = bass.reduce((a, b) => a + b, 0) / bass.length;
+                const trebleAverage = treble.reduce((a, b) => a + b, 0) / treble.length;
+
+                const red = Math.floor(map(bassAverage, 0, 255, 0, 255));
+                const green = Math.floor(map(trebleAverage, 0, 255, 0, 255));
+                const blue = Math.floor(map(bassAverage + trebleAverage, 0, 510, 0, 255));
+
+                const colors = [
+                    `rgb(${red}, ${green}, ${blue})`,
+                    `rgb(${blue}, ${red}, ${green})`,
+                    `rgb(${green}, ${blue}, ${red})`,
+                    'yellow', 'purple', 'pink', 'white', 'black'
+                ];
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                h1.style.color = color;
+
+                const now = performance.now();
+                if (bassAverage > 150) {
+                    beatTimes.push(now);
+                    if (beatTimes.length > 10) beatTimes.shift();
+                }
+
+                
+
+                
+
+                if (!audio.paused) {
+                    requestAnimationFrame(changeColor);
+                }
+            }
+            changeColor();
+        }
+    </script>
+</body>
+
+</html>
