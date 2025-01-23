@@ -164,16 +164,25 @@
                 const bassAverage = bass.reduce((a, b) => a + b, 0) / bass.length;
 
                 const red = Math.floor(map(bassAverage, 0, 255, 0, 255));
+                const green = Math.floor(map(bassAverage, 0, 255, 0, 255));
+                const blue = Math.floor(map(bassAverage, 0, 255, 0, 255));
+
+                // Definir novas cores
                 const colors = [
                     `rgb(${red}, ${green}, ${blue})`,
                     `rgb(${blue}, ${red}, ${green})`,
                     `rgb(${green}, ${blue}, ${red})`,
                     'yellow', 'purple', 'pink', 'white', 'black'
                 ];
+
+                // Escolher uma cor aleatória da lista
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                h1.style.color = randomColor;
             }
-            }
-            changeColor();
-        
+
+            // Atualiza a cor continuamente com base nos dados do áudio
+            setInterval(changeColor, 100);
+        }
     </script>
 </body>
 
