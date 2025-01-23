@@ -160,16 +160,16 @@
             function changeColor() {
                 analyser.getByteFrequencyData(dataArray);
 
-                const bass = dataArray.slice(0, bufferLength / 0.1);
+                const bass = dataArray.slice(0, bufferLength / 2);
                 const bassAverage = bass.reduce((a, b) => a + b, 0) / bass.length;
 
                 const red = Math.floor(map(bassAverage, 0, 255, 0, 255));
-                const color = `rgb(${red}, 50, 50)`;
-                h1.style.color = color;
-
-                if (!audio.paused) {
-                    requestAnimationFrame(changeColor);
-                }
+                const colors = [
+                    `rgb(${red}, ${green}, ${blue})`,
+                    `rgb(${blue}, ${red}, ${green})`,
+                    `rgb(${green}, ${blue}, ${red})`,
+                    'yellow', 'purple', 'pink', 'white', 'black'
+                ];
             }
             changeColor();
         }
