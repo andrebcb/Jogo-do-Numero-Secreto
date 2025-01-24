@@ -2,7 +2,7 @@
 let numeroUsados = [];
 let chunkNumerica = 5000;
 let numeroSecreto = gerarNumeroAleatorio();
-console.log(`${numeroSecreto}`);
+//console.log(`${numeroSecreto}`);
 let tentativas = 1;
 
 //<script src="app.js" defer></script>
