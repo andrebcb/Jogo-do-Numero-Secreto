@@ -56,7 +56,7 @@ function gerarNumeroAleatorio() {
         gerarNumeroAleatorio();
 } else {
     numeroUsados.push(numeroParaguardar);
-    console.log(numeroUsados);
+    
     return numeroParaguardar;
 }
 
