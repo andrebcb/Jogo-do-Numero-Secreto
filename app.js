@@ -74,7 +74,7 @@ function habilitarbotão() {
 
 function novojogo() {
 numeroSecreto = gerarNumeroAleatorio();
-console.log(`${numeroSecreto}`);
+
 tentativas = 1;
 exibirTextosTelas('h1', 'Jogo do Numero Secreto');
 exibirTextosTelas('p', 'Escolha um numero entre 1 e 5000');
